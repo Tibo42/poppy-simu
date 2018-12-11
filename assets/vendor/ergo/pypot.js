@@ -1,10 +1,14 @@
 define([ 'gui' ], function(gui) {
 
   var defaultMotors = [ 'm1', 'm2', 'm3', 'm4', 'm5', 'm6' ];
+    
+  var url = document.createElement('a');
+  url.href = window.location.href;
+  
 
   var PYPOT = {
-    HOST: '127.0.0.1',
-    PORT: '8080',
+    HOST: url.hostname,
+    PORT: url.hash.substr(1),
     FREQ: 20,
     motors: {},
     pollRequest: null,

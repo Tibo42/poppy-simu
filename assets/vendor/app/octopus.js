@@ -9,10 +9,18 @@ define([ 'ergojr', 'pypot', 'gui' ], function(ERGOJR, PYPOT, gui) {
 
   gui.controller.remoteHost.onChange(function(value) {
     PYPOT.HOST = gui.guiData.remoteHost;
+    if (gui.guiData.remoteStatus) {
+      PYPOT.stopPoll();
+      PYPOT.startPoll();
+    }
   });
 
   gui.controller.remotePort.onChange(function(value) {
     PYPOT.PORT = gui.guiData.remotePort;
+    if (gui.guiData.remoteStatus) {
+      PYPOT.stopPoll();
+      PYPOT.startPoll();
+    }
   });
 
   gui.controller.remoteFrequency.onChange(function(value) {

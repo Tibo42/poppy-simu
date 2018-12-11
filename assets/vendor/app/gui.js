@@ -10,14 +10,20 @@ define([ 'dat', 'container' ], function(dat, container) {
     return decodeURIComponent(results[2].replace(/\+/g, " "));
   }
 
+  var url = document.createElement('a');
+  url.href = window.location.href;
+
   var remoteHost = getParameterByName('remote-host');
   var remotePort = getParameterByName('remote-port');
-
+ 
+  
   var gui = {};
 
-  gui.gui = new dat.GUI({ autoPlace: false });
+  gui.gui = new dat.GUI({ autoPlace: true });
   var guiContainer = document.querySelector('.visualizer-gui');
   guiContainer.appendChild(gui.gui.domElement)
+  
+  
 
   gui.guiData = {
     m1: 0,
@@ -29,14 +35,21 @@ define([ 'dat', 'container' ], function(dat, container) {
 
     partColor: 0xFFFFFF,
 
-    remoteStatus: remoteHost ? true : false,
-    remoteHost: remoteHost || '127.0.0.1',
-    remotePort: remotePort || '8080',
-    remoteFrequency: 20,
+    remoteStatus: remoteHost ? false : true,
+    remoteHost: remoteHost || url.hostname,
+    remotePort: remotePort || url.hash.substr(1),
+    remoteFrequency: 10,
   };
 
   gui.controller = {};
-
+    
+  gui.controller.remote = gui.gui.addFolder('Contrôle à distance');
+  gui.controller.remote.add(gui.guiData, 'remoteStatus').name('Synchroniser');
+  gui.controller.remoteHost = gui.controller.remote.add(gui.guiData, 'remoteHost').name('Hôte');
+  gui.controller.remotePort = gui.controller.remote.add(gui.guiData, 'remotePort').name('Port');
+  gui.controller.remoteFrequency = gui.controller.remote.add(gui.guiData, 'remoteFrequency', 1, 35, 1).name('Fréquence');
+  gui.controller.remote.open();
+    
   gui.controller.motors = gui.gui.addFolder('Angles des moteurs');
   gui.controller.motors.add(gui.guiData, 'm1', -180, 180, 1).name('m1').listen();
   gui.controller.motors.add(gui.guiData, 'm2', -180, 180, 1).name('m2').listen();
@@ -44,14 +57,9 @@ define([ 'dat', 'container' ], function(dat, container) {
   gui.controller.motors.add(gui.guiData, 'm4', -180, 180, 1).name('m4').listen();
   gui.controller.motors.add(gui.guiData, 'm5', -180, 180, 1).name('m5').listen();
   gui.controller.motors.add(gui.guiData, 'm6', -180, 180, 1).name('m6').listen();
-  gui.controller.motors.open();
+  gui.controller.motors.close();
 
-  gui.controller.remote = gui.gui.addFolder('Contrôle à distance');
-  gui.controller.remote.add(gui.guiData, 'remoteStatus').name('Synchroniser');
-  gui.controller.remoteHost = gui.controller.remote.add(gui.guiData, 'remoteHost').name('Hôte');
-  gui.controller.remotePort = gui.controller.remote.add(gui.guiData, 'remotePort').name('Port');
-  gui.controller.remoteFrequency = gui.controller.remote.add(gui.guiData, 'remoteFrequency', 1, 35, 1).name('Fréquence');
-  gui.controller.remote.open();
+  
 
   return gui;
 });
